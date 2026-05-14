@@ -64,7 +64,7 @@ User question
 | Layer | Choice |
 |---|---|
 | Agent framework | [LangGraph](https://langchain-ai.github.io/langgraph/) |
-| LLM provider | Any model via [OpenRouter](https://openrouter.ai) (OpenAI-compatible API) |
+| LLM provider | OpenAI via `langchain-openai` |
 | A2A transport | [a2a-sdk](https://pypi.org/project/a2a-sdk/) |
 | Registry | FastAPI + in-memory store |
 | Package manager | [uv](https://docs.astral.sh/uv/) |
@@ -107,7 +107,7 @@ Tổng kết & Q&A (15 phút)
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/) package manager
-- An [OpenRouter](https://openrouter.ai) API key
+- An OpenAI API key
 
 ### Setup
 
@@ -119,7 +119,7 @@ uv sync
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your OpenRouter API key
+# Edit .env with your OpenAI API key
 ```
 
 ### Run the Full System (Stage 5)
@@ -132,6 +132,16 @@ cp .env.example .env
 uv run python test_client.py
 ```
 
+On Windows PowerShell, start each service in a separate terminal:
+
+```powershell
+uv run python -m registry
+uv run python -m tax_agent
+uv run python -m compliance_agent
+uv run python -m law_agent
+uv run python -m customer_agent
+```
+
 ### Run Individual Stage Demos
 
 No servers needed — each demo runs as a standalone script:
@@ -140,7 +150,7 @@ No servers needed — each demo runs as a standalone script:
 uv run python stages/stage_1_direct_llm/main.py
 uv run python stages/stage_2_rag_tools/main.py
 uv run python stages/stage_3_single_agent/main.py
-uv run python stages/stage_4_multi_agent/main.py
+uv run python stages/stage_4_milti_agent/main.py
 ```
 
 ## LLM Evolution Stages
@@ -167,7 +177,7 @@ legal_multiagent/
 ├── .env.example               # Required environment variables
 │
 ├── common/                    # Shared utilities
-│   ├── llm.py                 # get_llm() → ChatOpenAI via OpenRouter
+│   ├── llm.py                 # get_llm() → ChatOpenAI via OpenAI
 │   ├── a2a_client.py          # delegate() — A2A message sending
 │   └── registry_client.py     # discover() / register() — Registry API
 │
@@ -181,7 +191,7 @@ legal_multiagent/
 │   ├── stage_1_direct_llm/
 │   ├── stage_2_rag_tools/
 │   ├── stage_3_single_agent/
-│   └── stage_4_multi_agent/
+│   └── stage_4_milti_agent/
 │
 └── docs/                      # Architecture diagrams (SVG)
 ```
@@ -195,11 +205,11 @@ Each agent module follows the same structure:
 
 | Environment Variable | Description | Default |
 |---|---|---|
-| `OPENROUTER_API_KEY` | Your OpenRouter API key | (required) |
-| `OPENROUTER_MODEL` | Model identifier | `anthropic/claude-sonnet-4-5` |
+| `OPENAI_API_KEY` | Your OpenAI API key | (required) |
+| `OPENAI_MODEL` | Model identifier | `gpt-4o-mini` |
 | `REGISTRY_URL` | Registry service URL | `http://localhost:10000` |
 
-The model is swappable to any OpenRouter-supported model (e.g., `openai/gpt-4o`, `google/gemini-2.0-flash`).
+The model is swappable to any OpenAI chat model by setting `OPENAI_MODEL`.
 
 ## Documentation Diagrams
 
